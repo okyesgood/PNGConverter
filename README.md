@@ -1,6 +1,6 @@
 # PNGConverter
 
-Amazon 图片发布转换工具，当前版本 4.27.0。源码位于 [src/PNGConverter](src/PNGConverter)，使用 Windows Forms 和 .NET 8。
+Amazon 图片发布转换工具，当前版本 4.27.0。源码位于 [src](src)，使用 Windows Forms 和 .NET 8。
 
 ## 功能
 
@@ -15,8 +15,8 @@ Amazon 图片发布转换工具，当前版本 4.27.0。源码位于 [src/PNGCon
 需要 Windows 10/11 和 .NET 8 SDK。在仓库根目录运行：
 
 ```powershell
-dotnet restore src/PNGConverter/PNG转JPG-Web.csproj
-dotnet build src/PNGConverter/PNG转JPG-Web.csproj -c Release
+dotnet restore src/PNG转JPG-Web.csproj
+dotnet build src/PNG转JPG-Web.csproj -c Release
 ```
 
 发布文件请输出到仓库外部目录。编译产物、本地配置和运行报告不进入 Git。
