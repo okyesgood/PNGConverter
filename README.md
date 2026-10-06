@@ -1,13 +1,22 @@
 # PNGConverter
 
-Windows PNG-to-JPG conversion tools. The maintainable Windows Forms source is in [source/png-converter-tools](source/png-converter-tools).
+Amazon 图片发布转换工具，当前版本 4.27.0。源码位于 [source/png-converter-tools](source/png-converter-tools)，使用 Windows Forms 和 .NET 8。
 
-## Build
+## 功能
 
-Requires Windows 10/11 and the .NET 8 SDK.
+- 选择或拖入 PNG 文件与文件夹，递归查找并批量转换。
+- 支持详情图、基础 A+、高级 A+、自定义尺寸和原尺寸输出。
+- 转换透明区域为白色或黑色背景，输出 JPEG 时清除源图片元数据。
+- 验证临时 JPEG 后替换目标文件，生成 CSV 和 JSON 运行报告。
+- 可取消处理，并可选择在成功转换后删除原 PNG。
 
-Run dotnet restore and dotnet build -c Release from source/png-converter-tools.
+## 构建
 
-See the source rebuild notes in that directory for features, limitations, and publishing instructions.
+需要 Windows 10/11 和 .NET 8 SDK。在源码目录运行：
 
-Release packages, compiled binaries, and local test data are excluded from this source repository.
+```powershell
+dotnet restore
+dotnet build -c Release
+```
+
+运行或发布后，可在程序目录放置 `config.json` 覆盖默认设置。编译产物、发布包、本地配置和报告不进入 Git。

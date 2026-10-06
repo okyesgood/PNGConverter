@@ -4,6 +4,8 @@
 /test/
 **/bin/
 **/obj/
+**/logs/
+**/config.json
 *.exe
 *.dll
 *.pdb

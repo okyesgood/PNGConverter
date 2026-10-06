@@ -13,15 +13,12 @@ public sealed class MainForm : Form
     private readonly ListBox _log = new() { Dock = DockStyle.Fill, BackColor = Color.White, ForeColor = Color.FromArgb(54, 70, 92), HorizontalScrollbar = true };
     private readonly Label _summary = new() { AutoSize = true, Text = "等待输入 PNG 文件或文件夹…", ForeColor = Color.FromArgb(91, 111, 138) };
     private readonly ProgressBar _progress = new() { Dock = DockStyle.Fill, Minimum = 0, Height = 8 };
-    private readonly Button _chooseFiles = new() { Text = "选择 PNG 文件", AutoSize = true };
-    private readonly Button _chooseFolder = new() { Text = "选择文件夹", AutoSize = true };
     private readonly Button _start = new() { Text = "开始处理", AutoSize = true };
     private readonly Button _cancel = new() { Text = "取消处理", AutoSize = true, Enabled = false };
     private readonly ComboBox _preset = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 180 };
     private readonly NumericUpDown _quality = new() { Minimum = 1, Maximum = 100, Width = 70 };
     private readonly NumericUpDown _customWidth = new() { Minimum = 1, Maximum = 10000, Width = 72, Value = 970 };
     private readonly NumericUpDown _customHeight = new() { Minimum = 1, Maximum = 10000, Width = 72, Value = 600 };
-    private readonly ComboBox _metadata = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 145 };
     private readonly CheckBox _deleteOriginal = new() { Text = "处理后删除原 PNG", AutoSize = true, Checked = true };
     private readonly List<string> _pendingInputs = new();
     private CancellationTokenSource? _cts;
@@ -35,14 +32,12 @@ public sealed class MainForm : Form
         _preset.SelectedIndex = PresetIndex(_config.OutputPreset);
         _quality.Value = Math.Clamp(_config.JpegQuality, 1, 100);
         _customWidth.Value = Math.Clamp(_config.CustomWidth, 1, 10000); _customHeight.Value = Math.Clamp(_config.CustomHeight, 1, 10000);
-        _metadata.Items.AddRange(new object[] { "清理 AI/隐私信息", "保留元数据" });
-        _metadata.SelectedIndex = string.Equals(_config.MetadataMode, "preserve", StringComparison.OrdinalIgnoreCase) ? 1 : 0;
         var drop = new Panel { Dock = DockStyle.Fill, BackColor = Color.FromArgb(232, 241, 250), Padding = new Padding(2), AllowDrop = true, Cursor = Cursors.Hand };
         var dropTitle = new Label { Text = "DROP PNG FILES HERE", Dock = DockStyle.Top, Height = 42, TextAlign = ContentAlignment.BottomCenter, Font = new Font("Segoe UI", 16, FontStyle.Bold), ForeColor = Color.FromArgb(25, 73, 111) };
         var dropHint = new Label { Text = "拖入或点击选择图片/文件夹，加入处理队列", Dock = DockStyle.Top, Height = 34, TextAlign = ContentAlignment.TopCenter, Font = new Font("Microsoft YaHei UI", 10), ForeColor = Color.FromArgb(91, 126, 160) };
         drop.Controls.Add(dropHint); drop.Controls.Add(dropTitle);
         var actions = new FlowLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, WrapContents = false, Padding = new Padding(0, 8, 0, 8), BackColor = Color.Transparent };
-        actions.Controls.AddRange(new Control[] { MakeLabel("输出"), _preset, MakeLabel("质量"), _quality, MakeLabel("自定义"), _customWidth, MakeLabel("×"), _customHeight, MakeLabel("元数据"), _metadata, _start, _cancel, _deleteOriginal });
+        actions.Controls.AddRange(new Control[] { MakeLabel("输出"), _preset, MakeLabel("质量"), _quality, MakeLabel("自定义"), _customWidth, MakeLabel("×"), _customHeight, _start, _cancel, _deleteOriginal });
         _customWidth.Enabled = _customHeight.Enabled = _preset.SelectedIndex == 5;
         _preset.SelectedIndexChanged += (_, _) => _customWidth.Enabled = _customHeight.Enabled = _preset.SelectedIndex == 5;
         var top = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 4, Padding = new Padding(18, 16, 18, 10), BackColor = Color.FromArgb(244, 247, 251) };
@@ -61,7 +56,7 @@ public sealed class MainForm : Form
                 ? DragDropEffects.Copy
                 : DragDropEffects.None;
         };
-        DragEventHandler dragDrop = async (_, e) =>
+        DragEventHandler dragDrop = (_, e) =>
         {
             if (e.Data?.GetDataPresent(DataFormats.FileDrop) != true) return;
             var paths = ReadDropPaths(e.Data);
@@ -76,8 +71,6 @@ public sealed class MainForm : Form
             target.DragEnter += dragEnter;
             target.DragDrop += dragDrop;
         }
-        _chooseFiles.Click += (_, _) => ChooseFiles();
-        _chooseFolder.Click += (_, _) => ChooseFolder();
         var picker = new ContextMenuStrip();
         picker.Items.Add("选择 PNG 文件", null, (_, _) => ChooseFiles());
         picker.Items.Add("选择文件夹", null, (_, _) => ChooseFolder());
@@ -99,8 +92,6 @@ public sealed class MainForm : Form
     }
 
     private static Label MakeLabel(string text) => new() { Text = text, AutoSize = true, ForeColor = Color.FromArgb(91, 111, 138), Padding = new Padding(10, 9, 0, 0), Font = new Font("Microsoft YaHei UI", 9) };
-    private static Button CreatePrimaryButton(string text, Button button) { button.Text = text; button.AutoSize = true; button.Height = 34; button.FlatStyle = FlatStyle.Flat; button.FlatAppearance.BorderSize = 0; button.BackColor = Color.FromArgb(20, 126, 235); button.ForeColor = Color.White; button.Font = new Font("Microsoft YaHei UI", 9, FontStyle.Bold); button.Padding = new Padding(12, 0, 12, 0); return button; }
-    private static Button CreateSecondaryButton(string text, Button button) { button.Text = text; button.AutoSize = true; button.Height = 34; button.FlatStyle = FlatStyle.Flat; button.FlatAppearance.BorderColor = Color.FromArgb(164, 183, 205); button.BackColor = Color.FromArgb(235, 241, 248); button.ForeColor = Color.FromArgb(38, 70, 104); button.Font = new Font("Microsoft YaHei UI", 9); button.Padding = new Padding(10, 0, 10, 0); return button; }
     private void ApplyTheme() { _log.BorderStyle = BorderStyle.FixedSingle; _log.Font = new Font("Cascadia Mono", 9); _preset.BackColor = Color.FromArgb(235, 241, 248); _preset.ForeColor = Color.FromArgb(38, 70, 104); _quality.BackColor = Color.FromArgb(235, 241, 248); _quality.ForeColor = Color.FromArgb(38, 70, 104); _progress.Style = ProgressBarStyle.Continuous; }
 
     private async Task StartAsync(List<string> inputs)
@@ -175,8 +166,6 @@ public sealed class MainForm : Form
         _config.JpegQuality = (int)_quality.Value;
         _config.CustomWidth = (int)_customWidth.Value;
         _config.CustomHeight = (int)_customHeight.Value;
-        _config.MetadataMode = _metadata.SelectedIndex == 1 ? "preserve" : "sanitize";
-        _config.ClearMetadata = _config.MetadataMode == "sanitize";
     }
     private static int PresetIndex(string? preset) => (preset ?? "smart-mixed").ToLowerInvariant() switch
     { "detail" or "product" => 1, "basic-a+" or "basic-a-plus" => 2, "advanced-desktop" => 3, "advanced-mobile" => 4, "custom" => 5, "original" => 6, _ => 0 };

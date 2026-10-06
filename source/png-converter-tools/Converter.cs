@@ -33,7 +33,6 @@ public sealed class Converter
                 var w = Math.Max(1, (int)Math.Round(source.Width * scale));
                 var h = Math.Max(1, (int)Math.Round(source.Height * scale));
                 graphics.DrawImage(source, (plan.Width - w) / 2, (plan.Height - h) / 2, w, h);
-                MetadataSanitizer.PrepareForJpeg(target, _config);
                 var codec = ImageCodecInfo.GetImageEncoders().First(x => x.MimeType == "image/jpeg");
                 using var parameters = new EncoderParameters(1);
                 parameters.Param[0] = new EncoderParameter(Encoder.Quality, Math.Clamp(_config.JpegQuality, 1, 100));
