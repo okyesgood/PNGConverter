@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>PNG转JPG-Web</AssemblyName>
+    <RootNamespace>PngToJpgWeb</RootNamespace>
+    <Version>4.27.0</Version>
+    <AssemblyVersion>4.27.0.0</AssemblyVersion>
+    <FileVersion>4.27.0.0</FileVersion>
+    <InformationalVersion>4.27.0 AI/隐私元数据清理版</InformationalVersion>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,17 @@
+# Local builds and release packages
+/build/
+/package/
+/test/
+**/bin/
+**/obj/
+*.exe
+*.dll
+*.pdb
+*.zip
+*Zone.Identifier
+
+# Local machine and editor state
+.vs/
+.vscode/
+*.user
+*.suo

@@ -1,0 +1,10 @@
+{
+  "JpegQuality": 90,
+  "Background": "white",
+  "MaxInputPixels": 100000000,
+  "ClearMetadata": true,
+  "PreferPhotoshop": false,
+  "OutputPreset": "smart-mixed",
+  "CustomWidth": 970,
+  "CustomHeight": 600
+}
