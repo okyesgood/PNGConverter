@@ -1,7 +1,9 @@
 # Local builds and release packages
 /build/
 /package/
+/release/
 /test/
+/tools/
 **/bin/
 **/obj/
 **/logs/
